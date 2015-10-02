@@ -4,10 +4,10 @@
 import java.net.*;
 import java.util.*;
 import java.io.*;
-public class FTP {
+public class FTP extends Thread{
 
 
-    public FTP() extends Thread {
+    public FTP()  {
     }
 
     public void connect(String nameofHost) {
