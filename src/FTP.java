@@ -25,7 +25,7 @@ public class FTP extends Thread{
         if (socket!=null){
             throw new IOException("Already connected. Must disconnect first");
         }
-        socket = new Socket(nameofHost, port);      // it's connected
+        initiateConnection(port, nameofHost,fileName,"anonymous","anonymous");      // if no username is needed anonymous should be used
     }
 
     /**
@@ -45,10 +45,74 @@ public class FTP extends Thread{
             throw new IOException("Already connected. Must disconnect first");
         }
         socket = new Socket(nameofHost, port);      // it's connected
+
+        login(socket, user, password);
+    }
+
+    public void login(Socket socket, String username, String password) throws Exception {
+
+        send("User " + username);
+        send("Pass" + password);
+    }
+    public void readfromClient(Socket socket) throws IOException {
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        String response = read();
+    }
+
+    public void terminate() throws IOException {
+        try {
+            send("Quit");
+        }
+        finally {
+            socket = null;
+        }
+    }
+
+    private void send(String text) throws IOException {
+        if (socket == null) {
+            throw new IOException("Not connected");
+
+        }
+        try {
+            writer.write(text);
+            writer.flush();
+            //TODO add debug statement
+        }
+        catch (IOException e) {
+            socket = null;
+            throw e;
+        }
+    }
+    private String read() throws IOException {
+        String line = reader.readLine();
+        //TODO add debug statement
+
+        return line;
+    }
+    private void initiateConnection() throws Exception {
+        credential.credentialPrompt();
+        String user = credential.getUsername();
+        String pass = credential.getPass();
+        String host = credential.getHost();
+        String fileName = credential.getfileName();
+
+        this.initiateConnection(22,  host, fileName, user, pass);
     }
 
     private Socket socket = null;
 
+    private credentials credential = new credentials();
     private BufferedReader reader = null;
+    private BufferedWriter writer = null;
+
+    public static void main(String[] args) throws Exception{
+        FTP client= new FTP();
+
+        client.initiateConnection();
+
+
+
+    }
 
 }
