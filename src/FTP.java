@@ -4,8 +4,8 @@
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import java.text.*;
 public class FTP extends Thread{
-
 
     public FTP()  {
     }
@@ -13,7 +13,6 @@ public class FTP extends Thread{
     public void connect(String nameofHost) {
 
     }
-
     /**
      *
      * @param port -  the port that will be used for the ftp address, if not specified default is 22
@@ -37,7 +36,7 @@ public class FTP extends Thread{
      * @param password - password to connect to the ftp client
      */
     public void initiateConnection(int port, String nameofHost, String fileName, String user, String password) throws Exception {
-
+        createLogFile(fileName);
         if (user.isEmpty() && password.isEmpty()) {
             this.initiateConnection(port, nameofHost, fileName);
         }
@@ -57,6 +56,7 @@ public class FTP extends Thread{
 
         send("User " + username);
         send("Pass" + password);
+        terminate();
     }
     /**
      *
@@ -69,6 +69,7 @@ public class FTP extends Thread{
         finally {
             socket = null;
         }
+        bufferWriter.close();
     }
 
     /**
@@ -91,6 +92,7 @@ public class FTP extends Thread{
             socket = null;
             throw e;
         }
+        log("sent", text);
     }
 
     /**
@@ -102,6 +104,7 @@ public class FTP extends Thread{
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String line = reader.readLine();
         //TODO add debug statement
+        log("read", "Recieved: " + line);
 
         return line;
     }
@@ -113,7 +116,6 @@ public class FTP extends Thread{
      * @throws Exception
      */
     private void initiateConnection(int port, credentials cr) throws Exception {
-       // credential.credentialPrompt();
         cr.credentialPrompt();
         String user = cr.getUsername();
         String pass = cr.getPass();
@@ -123,7 +125,27 @@ public class FTP extends Thread{
         this.initiateConnection(port,  host, fileName, user, pass);
     }
 
+    private void createLogFile(String fileName) throws IOException {
+        File file = new File(fileName);
+
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        fileWriter = new FileWriter(file.getName(), true);
+        bufferWriter = new BufferedWriter(fileWriter);
+
+    }
+
+    private void log(String status, String message) throws IOException {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        bufferWriter.write(dateFormat.format(cal.getTime()) + status + message + "\n");
+
+    }
+
     private Socket socket = null;
+    FileWriter fileWriter;
+    BufferedWriter bufferWriter;
     private credentials credential = new credentials();
     private BufferedReader reader = null;
     private BufferedWriter writer = null;
@@ -131,16 +153,20 @@ public class FTP extends Thread{
     public  static void main(String[] args) throws Exception {
         FTP client = new FTP();
         credentials cr = new credentials();
-        cr.setHost(args[0]);
-        cr.setfileName(args[1]);
+        if (args.length<1) {
+            cr.setHost("tux.cs.drexel.edu");
+        }
+        //cr.setHost(args[0]);
+        if (args.length <2) {
+            cr.setfileName("test.txt");
+        }
+       // cr.setfileName(args[1]);
         int port = 22;
-        if (args.length == 3) {
-             port = Integer.parseInt(args[2]);
+        if (args.length < 3) {
+            // port = Integer.parseInt(args[2]);
         }
 
         client.initiateConnection(port, cr);
-
-
     }
 
 }

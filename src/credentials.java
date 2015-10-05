@@ -14,16 +14,14 @@ public class credentials {
         pass = new String();
     }
     public void credentialPrompt() throws IOException {
-        // Scanner in = new Scanner(System.in);
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+         Scanner in = new Scanner(System.in);
 
         System.out.print("Please enter the username: ");
-        username = in.readLine();
-       // EraserThread et = new EraserThread("Please enter the password: ");
-      //  Thread mask = new Thread(et);
-      //  mask.start();
+        username = in.next();
+        System.out.print("Please enter the password: ");
 
-            pass = new String(System.console().readPassword());
+       // pass = new String(System.console().readPassword());
+        pass = "Ishinbrot1";
 
     }
 
