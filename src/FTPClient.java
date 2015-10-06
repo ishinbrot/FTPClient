@@ -5,9 +5,9 @@ import java.net.*;
 import java.util.*;
 import java.io.*;
 import java.text.*;
-public class FTP extends Thread{
+public class FTPClient extends Thread{
 
-    public FTP()  {
+    public FTPClient()  {
     }
 
     public void connect(String nameofHost) {
@@ -56,7 +56,6 @@ public class FTP extends Thread{
 
         send("User " + username);
         send("Pass" + password);
-        terminate();
     }
     /**
      *
@@ -123,6 +122,10 @@ public class FTP extends Thread{
         String fileName = cr.getfileName();
 
         this.initiateConnection(port,  host, fileName, user, pass);
+
+        this.read();
+
+        this.terminate();
     }
 
     private void createLogFile(String fileName) throws IOException {
@@ -151,7 +154,7 @@ public class FTP extends Thread{
     private BufferedWriter writer = null;
 
     public  static void main(String[] args) throws Exception {
-        FTP client = new FTP();
+        FTPClient client = new FTPClient();
         credentials cr = new credentials();
         if (args.length<1) {
             cr.setHost("tux.cs.drexel.edu");
