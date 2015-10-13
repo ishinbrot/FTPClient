@@ -20,8 +20,7 @@ public class credentials {
         username = in.next();
         System.out.print("Please enter the password: ");
 
-       // pass = new String(System.console().readPassword());
-        pass = "Ishinbrot1";
+       pass = in.next();
 
     }
 

@@ -158,15 +158,18 @@ public class FTPClient extends Thread{
         credentials cr = new credentials();
         if (args.length<1) {
             cr.setHost("tux.cs.drexel.edu");
+            System.out.println("FTP Server not specified. Terminating Program");
+            System.exit(0);
         }
-        //cr.setHost(args[0]);
+        cr.setHost(args[0]);
         if (args.length <2) {
-            cr.setfileName("test.txt");
+            System.out.println("Log file not specified. Terminating Program");
+            System.exit(0);
         }
-       // cr.setfileName(args[1]);
+        cr.setfileName(args[1]);
         int port = 22;
-        if (args.length < 3) {
-            // port = Integer.parseInt(args[2]);
+        if (args.length > 2) {
+             port = Integer.parseInt(args[2]);
         }
 
         client.initiateConnection(port, cr);
