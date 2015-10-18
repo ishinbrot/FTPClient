@@ -27,6 +27,21 @@ public class credentials {
     public String getHost() {
         return host;
     }
+    public void userNamePrompt() throws IOException {
+        Scanner in = new Scanner(System.in);
+
+        System.out.print("Please enter the username: ");
+
+        username = in.next();
+    }
+    public void passwordPrompt() throws IOException {
+        Scanner in = new Scanner(System.in);
+
+        System.out.print("Please enter the password: ");
+
+        pass = in.next();
+    }
+
 
     public void setHost(String host) {
         this.host = host;
